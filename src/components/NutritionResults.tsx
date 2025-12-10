@@ -1,12 +1,23 @@
 import { Flame, Beef, Wheat, Droplets, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface NutritionData {
+interface FoodItem {
+  name: string;
+  quantity: string;
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
-  foodItems: string[];
+}
+
+interface NutritionData {
+  food: FoodItem[];
+  total: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 }
 
 interface NutritionResultsProps {
@@ -65,28 +76,32 @@ export function NutritionResults({ data }: NutritionResultsProps) {
         <span className="text-sm font-semibold text-foreground">Analysis Complete</span>
       </div>
 
-      {/* Food Items Detected */}
+      {/* Food Items Detected - Detailed */}
       <div className="bg-card rounded-xl p-4 shadow-soft border border-border animate-fade-in" style={{ animationDelay: "100ms" }}>
-        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
           Detected Foods
         </h3>
-        <div className="flex flex-wrap gap-1.5">
-          {data.foodItems.map((item, index) => (
-            <span 
+        <div className="space-y-2">
+          {data.food.map((item, index) => (
+            <div 
               key={index}
-              className="px-2.5 py-1 bg-accent text-accent-foreground rounded-md text-xs font-medium"
+              className="flex items-center justify-between py-2 border-b border-border last:border-0"
             >
-              {item}
-            </span>
+              <div className="flex-1">
+                <span className="text-sm font-medium text-foreground">{item.name}</span>
+                <span className="text-xs text-muted-foreground ml-2">({item.quantity})</span>
+              </div>
+              <span className="text-sm font-semibold text-secondary">{item.calories} kcal</span>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Macro Grid */}
+      {/* Total Macro Grid */}
       <div className="grid grid-cols-2 gap-3">
         {macroConfig.map((macro, index) => {
           const Icon = macro.icon;
-          const value = data[macro.key];
+          const value = data.total[macro.key];
           
           return (
             <div
@@ -105,7 +120,7 @@ export function NutritionResults({ data }: NutritionResultsProps) {
                 <span className="text-xs text-muted-foreground font-medium">{macro.label}</span>
               </div>
               <p className="text-2xl font-bold text-foreground tabular-nums">
-                {value}
+                {typeof value === 'number' ? value.toFixed(1) : value}
                 <span className="text-xs font-medium text-muted-foreground ml-0.5">
                   {macro.unit}
                 </span>
