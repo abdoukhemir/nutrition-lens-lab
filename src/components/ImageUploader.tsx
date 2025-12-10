@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { Upload, Camera, X, Loader2 } from "lucide-react";
+import { Upload, Camera, X, Loader2, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -43,27 +43,30 @@ export function ImageUploader({ onImageSelect, isAnalyzing, selectedImage, onCle
 
   if (selectedImage) {
     return (
-      <div className="relative w-full max-w-md mx-auto animate-scale-in">
-        <div className="relative rounded-2xl overflow-hidden shadow-card">
+      <div className="relative w-full animate-scale-in">
+        <div className="relative rounded-2xl overflow-hidden shadow-card border border-border">
           <img 
             src={selectedImage} 
             alt="Selected meal" 
-            className="w-full h-64 object-cover"
+            className="w-full h-56 md:h-64 object-cover"
           />
           {isAnalyzing && (
-            <div className="absolute inset-0 bg-foreground/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="absolute inset-0 bg-foreground/70 backdrop-blur-sm flex items-center justify-center">
               <div className="flex flex-col items-center gap-3">
-                <Loader2 className="w-10 h-10 text-primary-foreground animate-spin-slow" />
-                <span className="text-primary-foreground font-semibold">Analyzing your meal...</span>
+                <div className="relative">
+                  <div className="w-14 h-14 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
+                </div>
+                <span className="text-primary-foreground font-semibold text-sm">Analyzing your meal...</span>
               </div>
             </div>
           )}
           {!isAnalyzing && (
             <button
               onClick={onClear}
-              className="absolute top-3 right-3 p-2 rounded-full bg-card/90 backdrop-blur-sm hover:bg-card transition-colors shadow-soft"
+              className="absolute top-3 right-3 p-2 rounded-full bg-card/95 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground transition-colors shadow-soft"
+              aria-label="Remove image"
             >
-              <X className="w-5 h-5 text-foreground" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
@@ -72,29 +75,35 @@ export function ImageUploader({ onImageSelect, isAnalyzing, selectedImage, onCle
   }
 
   return (
-    <div className="w-full max-w-md mx-auto animate-fade-in">
+    <div className="w-full animate-fade-in">
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={cn(
-          "relative border-2 border-dashed rounded-2xl p-8 transition-all duration-300 cursor-pointer",
-          isDragging 
-            ? "border-primary bg-accent scale-[1.02]" 
-            : "border-border hover:border-primary/50 hover:bg-accent/50"
-        )}
         onClick={() => fileInputRef.current?.click()}
+        className={cn(
+          "relative border-2 border-dashed rounded-2xl p-6 transition-all duration-300 cursor-pointer group",
+          isDragging 
+            ? "border-primary bg-primary/5 scale-[1.01]" 
+            : "border-border hover:border-primary/50 hover:bg-accent/30"
+        )}
       >
-        <div className="flex flex-col items-center gap-4">
-          <div className="p-4 rounded-full bg-accent">
-            <Upload className="w-8 h-8 text-primary" />
+        <div className="flex flex-col items-center gap-3">
+          <div className={cn(
+            "p-3 rounded-xl transition-all duration-300",
+            isDragging ? "bg-primary/20 scale-110" : "bg-accent group-hover:bg-primary/10"
+          )}>
+            <ImagePlus className={cn(
+              "w-7 h-7 transition-colors",
+              isDragging ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+            )} />
           </div>
           <div className="text-center">
-            <p className="font-semibold text-foreground mb-1">
-              Drop your meal photo here
+            <p className="font-semibold text-foreground text-sm mb-0.5">
+              {isDragging ? "Drop it here!" : "Drop your meal photo"}
             </p>
-            <p className="text-sm text-muted-foreground">
-              or click to browse
+            <p className="text-xs text-muted-foreground">
+              or click to browse your files
             </p>
           </div>
         </div>
@@ -107,13 +116,18 @@ export function ImageUploader({ onImageSelect, isAnalyzing, selectedImage, onCle
         />
       </div>
 
+      {/* Camera Button - Bold & Prominent */}
       <div className="mt-4 flex justify-center">
         <Button
-          variant="outline"
-          onClick={() => cameraInputRef.current?.click()}
-          className="gap-2"
+          variant="default"
+          size="lg"
+          onClick={(e) => {
+            e.stopPropagation();
+            cameraInputRef.current?.click();
+          }}
+          className="gap-2 w-full max-w-xs"
         >
-          <Camera className="w-4 h-4" />
+          <Camera className="w-5 h-5" />
           Take a Photo
         </Button>
         <input

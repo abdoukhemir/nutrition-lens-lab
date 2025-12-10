@@ -2,8 +2,9 @@ import { useState, useCallback } from "react";
 import { Header } from "@/components/Header";
 import { ImageUploader } from "@/components/ImageUploader";
 import { NutritionResults } from "@/components/NutritionResults";
+import { FeatureHighlights } from "@/components/FeatureHighlights";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 interface NutritionData {
@@ -42,18 +43,14 @@ const Index = () => {
     setIsAnalyzing(true);
     
     try {
-      // Convert file to base64
       const base64 = await new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(selectedFile);
       });
 
-      // TODO: Replace with actual API call to edge function
-      // For now, simulate analysis with mock data
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Mock response - this will be replaced with actual AI analysis
       const mockData: NutritionData = {
         calories: 485,
         protein: 32,
@@ -76,68 +73,92 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container py-8 px-4">
-        {/* Hero Section */}
-        <section className="text-center mb-10 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            AI-Powered Nutrition Analysis
+      <main className="container px-4">
+        {/* Hero Section - Compact & Punchy */}
+        <section className="py-8 md:py-12">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4 animate-fade-in">
+              <Zap className="w-3 h-3" />
+              Instant AI Analysis
+            </div>
+            
+            <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-3 leading-tight animate-fade-in" style={{ animationDelay: "50ms" }}>
+              Snap. Analyze. <span className="text-primary">Eat Smart.</span>
+            </h1>
+            
+            <p className="text-base text-muted-foreground max-w-md mx-auto mb-6 animate-fade-in" style={{ animationDelay: "100ms" }}>
+              Upload any meal photo and get accurate calorie & macro estimates in seconds.
+            </p>
+
+            {/* Value Props - Inline */}
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: "150ms" }}>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                No calorie counting
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                Works with any food
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                100% free
+              </span>
+            </div>
           </div>
-          
-          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mb-4 leading-tight">
-            Know What You Eat
-          </h1>
-          
-          <p className="text-lg text-muted-foreground max-w-md mx-auto">
-            Snap a photo of your meal and get instant macro breakdowns powered by AI.
-          </p>
         </section>
 
-        {/* Upload Section */}
-        <section className="mb-8">
-          <ImageUploader
-            onImageSelect={handleImageSelect}
-            isAnalyzing={isAnalyzing}
-            selectedImage={selectedImage}
-            onClear={handleClear}
-          />
+        {/* Upload Section - Prominent */}
+        <section className="pb-8">
+          <div className="max-w-lg mx-auto">
+            <ImageUploader
+              onImageSelect={handleImageSelect}
+              isAnalyzing={isAnalyzing}
+              selectedImage={selectedImage}
+              onClear={handleClear}
+            />
+          </div>
         </section>
 
-        {/* Analyze Button */}
+        {/* Analyze Button - Bold CTA */}
         {selectedImage && !nutritionData && !isAnalyzing && (
-          <section className="flex justify-center mb-8 animate-fade-in">
+          <section className="flex justify-center pb-8 animate-scale-in">
             <Button
               variant="hero"
               size="lg"
               onClick={handleAnalyze}
-              className="gap-2"
+              className="gap-2 min-w-[200px]"
             >
-              Analyze Meal
+              <Sparkles className="w-5 h-5" />
+              Analyze Now
               <ArrowRight className="w-5 h-5" />
             </Button>
           </section>
         )}
 
         {/* Results Section */}
-        <section className="mb-12">
-          <NutritionResults data={nutritionData} />
-        </section>
-
-        {/* Try Again */}
         {nutritionData && (
-          <section className="flex justify-center animate-fade-in">
-            <Button variant="outline" onClick={handleClear}>
-              Analyze Another Meal
-            </Button>
+          <section className="pb-8">
+            <NutritionResults data={nutritionData} />
+            <div className="flex justify-center mt-6 animate-fade-in" style={{ animationDelay: "400ms" }}>
+              <Button variant="secondary" size="lg" onClick={handleClear} className="gap-2">
+                Analyze Another Meal
+              </Button>
+            </div>
           </section>
         )}
+
+        {/* Features Section - Visual Interest */}
+        {!selectedImage && <FeatureHighlights />}
       </main>
 
       {/* Footer */}
-      <footer className="py-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          © 2024 Hill Calories AI. Eat smarter.
-        </p>
+      <footer className="py-6 border-t border-border mt-8">
+        <div className="container text-center">
+          <p className="text-xs text-muted-foreground">
+            © 2024 Hill Calories AI · Built for healthier eating
+          </p>
+        </div>
       </footer>
     </div>
   );

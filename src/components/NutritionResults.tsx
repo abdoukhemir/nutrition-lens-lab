@@ -1,4 +1,4 @@
-import { Flame, Beef, Wheat, Droplets } from "lucide-react";
+import { Flame, Beef, Wheat, Droplets, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NutritionData {
@@ -20,7 +20,8 @@ const macroConfig = [
     unit: "kcal", 
     icon: Flame, 
     color: "text-secondary",
-    bgColor: "bg-secondary/10"
+    bgColor: "bg-secondary/15",
+    ringColor: "ring-secondary/30"
   },
   { 
     key: "protein" as const, 
@@ -28,23 +29,26 @@ const macroConfig = [
     unit: "g", 
     icon: Beef, 
     color: "text-primary",
-    bgColor: "bg-primary/10"
+    bgColor: "bg-primary/15",
+    ringColor: "ring-primary/30"
   },
   { 
     key: "carbs" as const, 
     label: "Carbs", 
     unit: "g", 
     icon: Wheat, 
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10"
+    color: "text-amber-600",
+    bgColor: "bg-amber-500/15",
+    ringColor: "ring-amber-500/30"
   },
   { 
     key: "fat" as const, 
     label: "Fat", 
     unit: "g", 
     icon: Droplets, 
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10"
+    color: "text-blue-600",
+    bgColor: "bg-blue-500/15",
+    ringColor: "ring-blue-500/30"
   },
 ];
 
@@ -52,17 +56,25 @@ export function NutritionResults({ data }: NutritionResultsProps) {
   if (!data) return null;
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6 animate-fade-in">
+    <div className="w-full max-w-lg mx-auto space-y-5">
+      {/* Success Header */}
+      <div className="flex items-center justify-center gap-2 animate-scale-in">
+        <div className="p-1.5 rounded-full bg-primary/15">
+          <Check className="w-4 h-4 text-primary" />
+        </div>
+        <span className="text-sm font-semibold text-foreground">Analysis Complete</span>
+      </div>
+
       {/* Food Items Detected */}
-      <div className="bg-card rounded-2xl p-5 shadow-card">
-        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+      <div className="bg-card rounded-xl p-4 shadow-soft border border-border animate-fade-in" style={{ animationDelay: "100ms" }}>
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
           Detected Foods
         </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {data.foodItems.map((item, index) => (
             <span 
               key={index}
-              className="px-3 py-1.5 bg-accent text-accent-foreground rounded-full text-sm font-medium"
+              className="px-2.5 py-1 bg-accent text-accent-foreground rounded-md text-xs font-medium"
             >
               {item}
             </span>
@@ -71,7 +83,7 @@ export function NutritionResults({ data }: NutritionResultsProps) {
       </div>
 
       {/* Macro Grid */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         {macroConfig.map((macro, index) => {
           const Icon = macro.icon;
           const value = data[macro.key];
@@ -80,29 +92,32 @@ export function NutritionResults({ data }: NutritionResultsProps) {
             <div
               key={macro.key}
               className={cn(
-                "bg-card rounded-2xl p-5 shadow-card transition-transform hover:scale-[1.02]",
+                "bg-card rounded-xl p-4 shadow-soft border border-border",
+                "hover:shadow-card transition-all duration-200",
                 "animate-fade-in"
               )}
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ animationDelay: `${(index + 2) * 100}ms` }}
             >
-              <div className={cn("p-2.5 rounded-xl w-fit mb-3", macro.bgColor)}>
-                <Icon className={cn("w-5 h-5", macro.color)} />
+              <div className="flex items-start justify-between mb-2">
+                <div className={cn("p-2 rounded-lg ring-2", macro.bgColor, macro.ringColor)}>
+                  <Icon className={cn("w-4 h-4", macro.color)} />
+                </div>
+                <span className="text-xs text-muted-foreground font-medium">{macro.label}</span>
               </div>
-              <p className="text-2xl font-bold text-foreground">
+              <p className="text-2xl font-bold text-foreground tabular-nums">
                 {value}
-                <span className="text-sm font-medium text-muted-foreground ml-1">
+                <span className="text-xs font-medium text-muted-foreground ml-0.5">
                   {macro.unit}
                 </span>
               </p>
-              <p className="text-sm text-muted-foreground mt-1">{macro.label}</p>
             </div>
           );
         })}
       </div>
 
       {/* Disclaimer */}
-      <p className="text-xs text-center text-muted-foreground px-4">
-        *Estimates based on AI analysis. Actual values may vary.
+      <p className="text-[10px] text-center text-muted-foreground px-4">
+        *AI estimates may vary from actual nutritional values
       </p>
     </div>
   );
