@@ -7,12 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, Zap } from "lucide-react";
 import { toast } from "sonner";
 
-interface NutritionData {
+interface FoodItem {
+  name: string;
+  quantity: string;
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
-  foodItems: string[];
+}
+
+interface NutritionData {
+  food: FoodItem[];
+  total: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 }
 
 const Index = () => {
@@ -43,24 +54,32 @@ const Index = () => {
     setIsAnalyzing(true);
     
     try {
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(selectedFile);
+      const formData = new FormData();
+      formData.append("image", selectedFile);
+
+      const response = await fetch("https://n8ninstance.abderrahmenkhemir.me/webhook-test/mealai", {
+        method: "POST",
+        body: formData,
       });
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (!response.ok) {
+        throw new Error("Failed to analyze image");
+      }
+
+      const result = await response.json();
       
-      const mockData: NutritionData = {
-        calories: 485,
-        protein: 32,
-        carbs: 45,
-        fat: 18,
-        foodItems: ["Grilled Chicken", "Brown Rice", "Steamed Broccoli", "Olive Oil"],
-      };
+      // Handle the response format: [{ output: { status, food, total } }]
+      const data = Array.isArray(result) ? result[0]?.output : result.output || result;
       
-      setNutritionData(mockData);
-      toast.success("Analysis complete!");
+      if (data.status === "success" && data.food && data.total) {
+        setNutritionData({
+          food: data.food,
+          total: data.total,
+        });
+        toast.success("Analysis complete!");
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
       console.error("Analysis error:", error);
       toast.error("Failed to analyze image. Please try again.");
