@@ -4,7 +4,7 @@ import { ImageUploader } from "@/components/ImageUploader";
 import { NutritionResults } from "@/components/NutritionResults";
 import { FeatureHighlights } from "@/components/FeatureHighlights";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, Zap } from "lucide-react";
+import { Sparkles, ArrowRight, Apple, Salad, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 interface FoodItem {
@@ -68,7 +68,6 @@ const Index = () => {
 
       const result = await response.json();
       
-      // Handle the response format: [{ output: { status, food, total } }]
       const data = Array.isArray(result) ? result[0]?.output : result.output || result;
       
       if (data.status === "success" && data.food && data.total) {
@@ -89,47 +88,53 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       
       <main className="container px-4">
-        {/* Hero Section - Compact & Punchy */}
-        <section className="py-8 md:py-12">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4 animate-fade-in">
-              <Zap className="w-3 h-3" />
-              Instant AI Analysis
+        {/* Hero Section */}
+        <section className="py-12 md:py-16 lg:py-20">
+          <div className="max-w-3xl mx-auto text-center">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-primary text-sm font-semibold mb-6 animate-fade-in shadow-soft">
+              <Zap className="w-4 h-4" />
+              AI-Powered Nutrition Analysis
             </div>
             
-            <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-3 leading-tight animate-fade-in" style={{ animationDelay: "50ms" }}>
-              Snap. Analyze. <span className="text-primary">Eat Smart.</span>
+            {/* Headline */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-5 leading-tight animate-fade-in" style={{ animationDelay: "100ms" }}>
+              Know exactly what's
+              <br />
+              <span className="text-gradient">on your plate</span>
             </h1>
             
-            <p className="text-base text-muted-foreground max-w-md mx-auto mb-6 animate-fade-in" style={{ animationDelay: "100ms" }}>
-              Upload any meal photo and get accurate calorie & macro estimates in seconds.
+            {/* Subheadline */}
+            <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto mb-8 animate-fade-in" style={{ animationDelay: "200ms" }}>
+              Snap a photo of any meal and get instant calorie & macro breakdown. 
+              No more guessing, no more logging.
             </p>
 
-            {/* Value Props - Inline */}
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: "150ms" }}>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                No calorie counting
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-secondary" />
+            {/* Trust Badges */}
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground mb-10 animate-fade-in" style={{ animationDelay: "300ms" }}>
+              <span className="flex items-center gap-2 bg-card px-4 py-2 rounded-full shadow-soft">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 Works with any food
               </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="flex items-center gap-2 bg-card px-4 py-2 rounded-full shadow-soft">
+                <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                Results in seconds
+              </span>
+              <span className="flex items-center gap-2 bg-card px-4 py-2 rounded-full shadow-soft">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 100% free
               </span>
             </div>
           </div>
         </section>
 
-        {/* Upload Section - Prominent */}
-        <section className="pb-8">
-          <div className="max-w-lg mx-auto">
+        {/* Upload Section */}
+        <section className="pb-10 animate-fade-in" style={{ animationDelay: "400ms" }}>
+          <div className="max-w-xl mx-auto">
             <ImageUploader
               onImageSelect={handleImageSelect}
               isAnalyzing={isAnalyzing}
@@ -139,17 +144,17 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Analyze Button - Bold CTA */}
+        {/* Analyze CTA */}
         {selectedImage && !nutritionData && !isAnalyzing && (
-          <section className="flex justify-center pb-8 animate-scale-in">
+          <section className="flex justify-center pb-10 animate-scale-in">
             <Button
               variant="hero"
-              size="lg"
+              size="xl"
               onClick={handleAnalyze}
-              className="gap-2 min-w-[200px]"
+              className="gap-3"
             >
               <Sparkles className="w-5 h-5" />
-              Analyze Now
+              Analyze My Meal
               <ArrowRight className="w-5 h-5" />
             </Button>
           </section>
@@ -157,26 +162,33 @@ const Index = () => {
 
         {/* Results Section */}
         {nutritionData && (
-          <section className="pb-8">
+          <section className="pb-12">
             <NutritionResults data={nutritionData} />
-            <div className="flex justify-center mt-6 animate-fade-in" style={{ animationDelay: "400ms" }}>
-              <Button variant="secondary" size="lg" onClick={handleClear} className="gap-2">
+            <div className="flex justify-center mt-8 animate-fade-in" style={{ animationDelay: "400ms" }}>
+              <Button variant="subtle" size="lg" onClick={handleClear} className="gap-2">
                 Analyze Another Meal
               </Button>
             </div>
           </section>
         )}
 
-        {/* Features Section - Visual Interest */}
+        {/* Features Section */}
         {!selectedImage && <FeatureHighlights />}
       </main>
 
       {/* Footer */}
-      <footer className="py-6 border-t border-border mt-8">
-        <div className="container text-center">
-          <p className="text-xs text-muted-foreground">
-            © 2024 Hill Calories AI · Built for healthier eating
-          </p>
+      <footer className="py-8 border-t border-border mt-8">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              © 2024 Hill Calories AI · Eat smarter, live better
+            </p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Apple className="w-4 h-4 text-primary" />
+              <span>Made with</span>
+              <Salad className="w-4 h-4 text-primary" />
+            </div>
+          </div>
         </div>
       </footer>
     </div>
