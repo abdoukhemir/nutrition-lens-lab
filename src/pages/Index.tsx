@@ -57,7 +57,7 @@ const Index = () => {
       const formData = new FormData();
       formData.append("image", selectedFile);
 
-      const response = await fetch("https://n8ninstance.abderrahmenkhemir.me/webhook-test/mealai", {
+      const response = await fetch("https://n8ninstance.abderrahmenkhemir.me/webhook/mealai", {
         method: "POST",
         body: formData,
       });
