@@ -60,6 +60,7 @@ const Index = () => {
       const response = await fetch("https://custom-n8n-i2df.onrender.com/webhook-test/mealai", {
         method: "POST",
         body: formData,
+        signal: AbortSignal.timeout(120000),
       });
 
       if (!response.ok) {
@@ -81,7 +82,11 @@ const Index = () => {
       }
     } catch (error) {
       console.error("Analysis error:", error);
-      toast.error("Failed to analyze image. Please try again.");
+      if (error instanceof Error && error.name === "AbortError") {
+        toast.error("Analysis timed out. Please try again with a smaller image or check your connection.");
+      } else {
+        toast.error("Failed to analyze image. Please try again.");
+      }
     } finally {
       setIsAnalyzing(false);
     }
