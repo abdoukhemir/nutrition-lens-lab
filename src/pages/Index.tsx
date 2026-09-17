@@ -60,6 +60,7 @@ const Index = () => {
       const response = await fetch("https://custom-n8n-i2df.onrender.com/webhook-test/mealai", {
         method: "POST",
         body: formData,
+        signal: AbortSignal.timeout(120000),
       });
 
       if (!response.ok) {
