@@ -57,7 +57,7 @@ const Index = () => {
       const formData = new FormData();
       formData.append("image", selectedFile);
 
-      const response = await fetch("https://custom-n8n-i2df.onrender.com/webhook-test/mealai", {
+      const response = await fetch("https://custom-n8n-i2df.onrender.com/webhook/mealai", {
         method: "POST",
         body: formData,
         signal: AbortSignal.timeout(120000),
